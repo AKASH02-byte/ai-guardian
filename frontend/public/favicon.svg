@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Shield Primary Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="50%" stop-color="#1D4ED8" />
+      <stop offset="100%" stop-color="#1E3A8A" />
+    </linearGradient>
+
+    <!-- Shield Rim/Bevel Gradient -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+
+    <!-- Inner Core Glow Gradient -->
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="1" />
+      <stop offset="60%" stop-color="#06B6D4" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Emerald Defense Glow -->
+    <linearGradient id="aiCore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <!-- Subtle Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Background for ultra-crisp tab display -->
+  <rect width="64" height="64" rx="14" fill="url(#bgGrad)" />
+  <rect width="62" height="62" x="1" y="1" rx="13" fill="none" stroke="#1E293B" stroke-width="1.5" />
+
+  <!-- Outer Cyber Defense Shield -->
+  <path d="M32 7 
+           C44 7 51 11 51 22 
+           C51 36.5 42 47.5 32 55 
+           C22 47.5 13 36.5 13 22 
+           C13 11 20 7 32 7 Z"
+        fill="url(#shieldGrad)"
+        stroke="url(#rimGrad)"
+        stroke-width="2"
+        stroke-linejoin="round" />
+
+  <!-- Inner Shield Inset Geometry -->
+  <path d="M32 12
+           C40.5 12 45.5 15 45.5 23.5
+           C45.5 34.5 38.5 43 32 49
+           C25.5 43 18.5 34.5 18.5 23.5
+           C18.5 15 23.5 12 32 12 Z"
+        fill="#0B132B"
+        fill-opacity="0.75"
+        stroke="#38BDF8"
+        stroke-width="1"
+        stroke-dasharray="3 2" />
+
+  <!-- AI Neural Circuit Lattice Lines -->
+  <!-- Top Circuit -->
+  <line x1="32" y1="14" x2="32" y2="22" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
+  <circle cx="32" cy="14" r="1.5" fill="#38BDF8" />
+
+  <!-- Diagonal Left Circuit -->
+  <path d="M23 21 L27 25" stroke="#38BDF8" stroke-width="1.2" stroke-linecap="round" />
+  <circle cx="23" cy="21" r="1.2" fill="#38BDF8" />
+
+  <!-- Diagonal Right Circuit -->
+  <path d="M41 21 L37 25" stroke="#38BDF8" stroke-width="1.2" stroke-linecap="round" />
+  <circle cx="41" cy="21" r="1.2" fill="#38BDF8" />
+
+  <!-- Bottom Circuit Trunk -->
+  <line x1="32" y1="36" x2="32" y2="44" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" />
+  <circle cx="32" cy="44" r="1.5" fill="#38BDF8" />
+
+  <!-- Central AI Guardian Core Node (Diamond / Quantum Nexus) -->
+  <polygon points="32,22 39,29 32,36 25,29"
+           fill="url(#aiCore)"
+           filter="url(#glow)" />
+
+  <!-- Inner Quantum Eye -->
+  <circle cx="32" cy="29" r="3" fill="#FFFFFF" />
+  <circle cx="32" cy="29" r="1.2" fill="#064E3B" />
+</svg>

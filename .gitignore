@@ -1,0 +1,34 @@
+# Dependencies
+venv/
+node_modules/
+frontend/node_modules/
+
+# Python cache & build
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Frontend build
+frontend/dist/
+
+# Databases & local stores
+*.db
+*.sqlite3
+backend/*.db
+
+# Environment variables
+.env
+*.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

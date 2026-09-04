@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="shieldBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="50%" stop-color="#1D4ED8" />
+      <stop offset="100%" stop-color="#172554" />
+    </linearGradient>
+
+    <linearGradient id="shieldBorder" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+
+    <linearGradient id="emeraldCore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#1E40AF" stop-opacity="0" />
+    </radialGradient>
+
+    <filter id="coreBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Protective Shield Plate -->
+  <path d="M64 12
+           C88 12 104 20 104 42
+           C104 72 84 96 64 112
+           C44 96 24 72 24 42
+           C24 20 40 12 64 12 Z"
+        fill="url(#shieldBg)"
+        stroke="url(#shieldBorder)"
+        stroke-width="3.5"
+        stroke-linejoin="round" />
+
+  <!-- Inner Inset Shield Ring -->
+  <path d="M64 22
+           C82 22 93 28 93 45
+           C93 68 78 88 64 100
+           C50 88 35 68 35 45
+           C35 28 46 22 64 22 Z"
+        fill="#0A0F1D"
+        stroke="#38BDF8"
+        stroke-width="1.8"
+        stroke-dasharray="6 3" />
+
+  <!-- Radial Background Core Glow -->
+  <circle cx="64" cy="58" r="32" fill="url(#centerGlow)" />
+
+  <!-- AI Neural Circuit Node Lines -->
+  <line x1="64" y1="26" x2="64" y2="44" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" />
+  <circle cx="64" cy="26" r="3" fill="#93C5FD" />
+
+  <path d="M46 40 L54 48" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" />
+  <circle cx="46" cy="40" r="2.5" fill="#93C5FD" />
+
+  <path d="M82 40 L74 48" stroke="#60A5FA" stroke-width="2.2" stroke-linecap="round" />
+  <circle cx="82" cy="40" r="2.5" fill="#93C5FD" />
+
+  <line x1="64" y1="72" x2="64" y2="90" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" />
+  <circle cx="64" cy="90" r="3" fill="#93C5FD" />
+
+  <!-- Central AI Guardian Core (Diamond / Quantum Nexus) -->
+  <polygon points="64,44 78,58 64,72 50,58"
+           fill="url(#emeraldCore)"
+           stroke="#A7F3D0"
+           stroke-width="2"
+           filter="url(#coreBlur)" />
+
+  <!-- Inner Spark Node -->
+  <circle cx="64" cy="58" r="5" fill="#FFFFFF" />
+  <circle cx="64" cy="58" r="2.2" fill="#047857" />
+</svg>
