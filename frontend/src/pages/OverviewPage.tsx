@@ -18,54 +18,26 @@ import {
   Bar,
   Cell
 } from 'recharts';
-import { api, formatINR } from '../services/api';
-import type { DashboardData, TopRiskItem } from '../types';
+import { formatINR } from '../services/api';
+import type { TopRiskItem } from '../types';
+import type { EntityProfile } from '../data/entityProfiles';
 import { MetricCard } from '../components/MetricCard';
 import { SeverityBadge } from '../components/SeverityBadge';
 import { RiskDetailDrawer } from '../components/RiskDetailDrawer';
 
 interface OverviewPageProps {
   onNavigateTab: (tab: any) => void;
+  entity: EntityProfile;
 }
 
-export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigateTab }) => {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigateTab, entity }) => {
   const [selectedRisk, setSelectedRisk] = useState<TopRiskItem | null>(null);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const res = await api.getDashboard();
-      setData(res);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
-  }, []);
+    setSelectedRisk(null);
+  }, [entity.id]);
 
-  if (loading || !data) {
-    return (
-      <div className="p-8 space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-slate-200 rounded w-1/4"></div>
-          <div className="grid grid-cols-5 gap-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-24 bg-slate-200 rounded"></div>
-            ))}
-          </div>
-          <div className="h-64 bg-slate-200 rounded"></div>
-        </div>
-      </div>
-    );
-  }
-
-  const { metrics, risk_trend, risk_by_category, top_risks, security_posture } = data;
+  const { metrics, risk_trend, risk_by_category, top_risks, security_posture } = entity.dashboard;
 
   const categoryColors = ['#DC2626', '#EA580C', '#D97706', '#0284C7', '#4F46E5', '#64748B'];
 
@@ -79,12 +51,12 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigateTab }) => 
             Continuous Cyber Risk Assessment
           </h2>
           <p className="text-xs text-slate-300 mt-0.5">
-            Enterprise financial exposure calculated across 20 critical infrastructure assets & live threat telemetry.
+            {entity.tier} benchmark: financial exposure calibrated from critical assets and live threat telemetry.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={loadData}
+            onClick={() => setSelectedRisk(null)}
             className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 border border-slate-700"
           >
             <RefreshCw className="w-3.5 h-3.5" />
@@ -95,7 +67,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigateTab }) => 
             className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
           >
             <TrendingUp className="w-4 h-4" />
-            Optimize Security Budget (₹10L)
+            Optimize Security Budget ({formatINR(metrics.security_budget_inr)})
           </button>
         </div>
       </div>
@@ -134,7 +106,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ onNavigateTab }) => 
           value={metrics.critical_risks_count}
           subtitle="Requiring urgent remediation"
           trend="up"
-          trendValue="7 Active"
+          trendValue={`${metrics.critical_risks_count} Active`}
           trendIsGood={false}
           highlightColor="rose"
         />

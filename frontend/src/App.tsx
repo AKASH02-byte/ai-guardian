@@ -12,9 +12,11 @@ import { WhatIfSimulatorPage } from './pages/WhatIfSimulatorPage';
 import { RecommendationsPage } from './pages/RecommendationsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { getEntityProfile, type EntityId } from './data/entityProfiles';
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<NavItem>('overview');
+  const [selectedEntity, setSelectedEntity] = useState<EntityId>('bharat-financial');
 
   const pageMeta: Record<NavItem, { title: string; subtitle: string }> = {
     overview: {
@@ -73,11 +75,21 @@ export function App() {
       {/* Main Workspace */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top Header */}
-        <Header pageTitle={meta.title} pageSubtitle={meta.subtitle} />
+        <Header
+          pageTitle={meta.title}
+          pageSubtitle={meta.subtitle}
+          selectedEntity={selectedEntity}
+          onEntityChange={setSelectedEntity}
+        />
 
         {/* Page Container */}
         <main className="flex-1 bg-slate-50">
-          {currentTab === 'overview' && <OverviewPage onNavigateTab={setCurrentTab} />}
+          {currentTab === 'overview' && (
+            <OverviewPage
+              onNavigateTab={setCurrentTab}
+              entity={getEntityProfile(selectedEntity)}
+            />
+          )}
           {currentTab === 'risk-intelligence' && <RiskIntelligencePage onNavigateTab={setCurrentTab} />}
           {currentTab === 'assets' && <AssetsPage />}
           {currentTab === 'vulnerabilities' && <VulnerabilitiesPage />}
