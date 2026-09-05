@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Search, Bell, Building2, ChevronDown, Check } from 'lucide-react';
+import { Search, Bell, Building2, ChevronDown, Check, ShieldAlert, Info, CheckCheck } from 'lucide-react';
 import { entityProfiles, type EntityId } from '../data/entityProfiles';
 
 interface HeaderProps {
@@ -11,12 +11,16 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ pageTitle, pageSubtitle, selectedEntity, onEntityChange }) => {
   const [isEntityMenuOpen, setIsEntityMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
   const menuRef = useRef<HTMLDivElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
   const activeEntity = entityProfiles.find((entity) => entity.id === selectedEntity) ?? entityProfiles[0];
 
   useEffect(() => {
     const closeOnOutsideClick = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) setIsEntityMenuOpen(false);
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) setIsNotificationsOpen(false);
     };
     document.addEventListener('mousedown', closeOnOutsideClick);
     return () => document.removeEventListener('mousedown', closeOnOutsideClick);
@@ -45,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({ pageTitle, pageSubtitle, selecte
           </button>
           {isEntityMenuOpen && (
             <div className="absolute right-0 mt-2 w-80 rounded-lg border border-slate-700/80 bg-[#0d1422] p-1.5 shadow-xl shadow-black/40 z-30" role="listbox" aria-label="Select financial entity">
-              <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Entity benchmarks</p>
+              <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">{activeEntity.name} benchmarks</p>
               {entityProfiles.map((entity) => {
                 const isSelected = entity.id === selectedEntity;
                 return (
@@ -83,10 +87,48 @@ export const Header: React.FC<HeaderProps> = ({ pageTitle, pageSubtitle, selecte
         </div>
 
         {/* Notifications */}
-        <button className="relative p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-md transition-colors">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#090d16]"></span>
-        </button>
+        <div className="relative" ref={notificationsRef}>
+          <button
+            type="button"
+            onClick={() => setIsNotificationsOpen((open) => !open)}
+            aria-label="Open notifications"
+            aria-haspopup="dialog"
+            aria-expanded={isNotificationsOpen}
+            className="relative p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#090d16]"></span>}
+          </button>
+          {isNotificationsOpen && (
+            <div className="absolute right-0 mt-2 w-96 overflow-hidden rounded-lg border border-slate-700/80 bg-[#0d1422] shadow-xl shadow-black/40 z-30" role="dialog" aria-label="Notifications">
+              <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+                <div>
+                  <p className="text-xs font-bold text-slate-100">Notifications</p>
+                  <p className="mt-0.5 text-[10px] text-slate-400">{unreadCount ? `${unreadCount} unread security alerts` : 'All caught up'}</p>
+                </div>
+                {unreadCount > 0 && (
+                  <button type="button" onClick={() => setUnreadCount(0)} className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-400 hover:text-blue-300">
+                    <CheckCheck className="h-3.5 w-3.5" /> Mark all read
+                  </button>
+                )}
+              </div>
+              <div className="divide-y divide-slate-800">
+                <div className="flex gap-3 px-4 py-3 hover:bg-slate-800/60">
+                  <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
+                  <div><p className="text-xs font-semibold text-slate-100">Critical exposure requires review</p><p className="mt-0.5 text-[11px] text-slate-400">The active entity has new high-priority risk telemetry.</p></div>
+                </div>
+                <div className="flex gap-3 px-4 py-3 hover:bg-slate-800/60">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
+                  <div><p className="text-xs font-semibold text-slate-100">Entity benchmark updated</p><p className="mt-0.5 text-[11px] text-slate-400">Risk and posture benchmarks have been refreshed.</p></div>
+                </div>
+                <div className="flex gap-3 px-4 py-3 hover:bg-slate-800/60">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                  <div><p className="text-xs font-semibold text-slate-100">Telemetry sync completed</p><p className="mt-0.5 text-[11px] text-slate-400">Latest control coverage has been incorporated.</p></div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* User Profile */}
         <div className="flex items-center gap-2.5 pl-2 border-l border-slate-800">

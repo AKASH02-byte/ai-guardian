@@ -13,6 +13,7 @@ import {
   Settings as SettingsIcon
 } from 'lucide-react';
 import { Logo } from './Logo';
+import { useEntity } from '../context/EntityContext';
 
 export type NavItem =
   | 'overview'
@@ -33,6 +34,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange }) => {
+  const { entity } = useEntity();
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'risk-intelligence', label: 'Risk Intelligence', icon: ShieldAlert },
@@ -85,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange }) => 
           <span className="font-medium text-slate-300">Team BYTE</span>
           <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[10px] border border-emerald-500/20 font-mono">LIVE API</span>
         </div>
-        <p className="text-[11px] text-slate-500 truncate">Bharat Financial Services</p>
+        <p className="text-[11px] text-slate-500 truncate" title={entity.name}>{entity.name}</p>
       </div>
     </aside>
   );
