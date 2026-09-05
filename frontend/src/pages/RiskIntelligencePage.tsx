@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { api, formatINR } from '../services/api';
+import { formatINR } from '../services/api';
+import { useEntity } from '../context/EntityContext';
 import type { TopRiskItem } from '../types';
 import { RiskHeatmap } from '../components/RiskHeatmap';
 import { SeverityBadge } from '../components/SeverityBadge';
@@ -16,22 +17,15 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({ onNa
   const [selectedRisk, setSelectedRisk] = useState<TopRiskItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
+  const { entity } = useEntity();
 
   useEffect(() => {
-    loadRisks();
-  }, []);
-
-  const loadRisks = async () => {
-    try {
-      setLoading(true);
-      const res = await api.getDashboard();
-      setRisks(res.top_risks);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setLoading(true);
+    setRisks(entity.dashboard.top_risks);
+    setSelectedRisk(null);
+    setCategoryFilter('ALL');
+    setLoading(false);
+  }, [entity]);
 
   const filteredRisks = risks.filter((r) => {
     const matchesSearch =
@@ -41,7 +35,7 @@ export const RiskIntelligencePage: React.FC<RiskIntelligencePageProps> = ({ onNa
     return matchesSearch && matchesCat;
   });
 
-  const categories = ['ALL', 'Ransomware', 'Data Breach', 'Account Takeover', 'Cloud Misconfiguration', 'Supply Chain', 'Insider Threat'];
+  const categories = ['ALL', ...new Set(risks.map((risk) => risk.category))];
 
   if (loading) {
     return <div className="p-8 text-center text-slate-500">Loading Risk Intelligence data...</div>;

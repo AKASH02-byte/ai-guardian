@@ -2,21 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { api, formatINR } from '../services/api';
 import type { Threat } from '../types';
 import { SeverityBadge } from '../components/SeverityBadge';
+import { useEntity } from '../context/EntityContext';
+import { entityThreats } from '../data/entityData';
 import { Flame, Activity, Clock } from 'lucide-react';
 
 export const ThreatsPage: React.FC = () => {
   const [threats, setThreats] = useState<Threat[]>([]);
   const [loading, setLoading] = useState(true);
+  const { entity } = useEntity();
 
   useEffect(() => {
     loadThreats();
-  }, []);
+  }, [entity]);
 
   const loadThreats = async () => {
     try {
       setLoading(true);
       const res = await api.getThreats();
-      setThreats(res);
+      setThreats(entityThreats(res, entity));
     } catch (err) {
       console.error(err);
     } finally {

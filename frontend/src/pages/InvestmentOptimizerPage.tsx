@@ -3,9 +3,12 @@ import { api, formatINR } from '../services/api';
 import type { OptimizeResponse } from '../types';
 import { TrendingUp, Calculator, CheckCircle2, Zap } from 'lucide-react';
 import { MetricCard } from '../components/MetricCard';
+import { useEntity } from '../context/EntityContext';
+import { entityOptimization } from '../data/entityData';
 
 export const InvestmentOptimizerPage: React.FC = () => {
-  const [budgetInput, setBudgetInput] = useState<number>(1000000); // Default ₹10 Lakhs
+  const { entity } = useEntity();
+  const [budgetInput, setBudgetInput] = useState<number>(entity.dashboard.metrics.security_budget_inr);
   const [result, setResult] = useState<OptimizeResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -13,7 +16,7 @@ export const InvestmentOptimizerPage: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.optimizeInvestment(b);
-      setResult(res);
+      setResult(entityOptimization(res, entity, b));
     } catch (err) {
       console.error(err);
     } finally {
@@ -22,8 +25,10 @@ export const InvestmentOptimizerPage: React.FC = () => {
   };
 
   useEffect(() => {
-    runOptimization(budgetInput);
-  }, []);
+    const entityBudget = entity.dashboard.metrics.security_budget_inr;
+    setBudgetInput(entityBudget);
+    runOptimization(entityBudget);
+  }, [entity]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

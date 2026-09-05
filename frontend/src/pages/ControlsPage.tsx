@@ -2,20 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { api, formatINR } from '../services/api';
 import type { SecurityControl } from '../types';
 import { ShieldCheck } from 'lucide-react';
+import { useEntity } from '../context/EntityContext';
+import { entityControls } from '../data/entityData';
 
 export const ControlsPage: React.FC = () => {
   const [controls, setControls] = useState<SecurityControl[]>([]);
   const [loading, setLoading] = useState(true);
+  const { entity } = useEntity();
 
   useEffect(() => {
     loadControls();
-  }, []);
+  }, [entity]);
 
   const loadControls = async () => {
     try {
       setLoading(true);
       const res = await api.getControls();
-      setControls(res);
+      setControls(entityControls(res, entity));
     } catch (err) {
       console.error(err);
     } finally {

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import type { Vulnerability } from '../types';
 import { SeverityBadge } from '../components/SeverityBadge';
+import { useEntity } from '../context/EntityContext';
+import { entityVulnerabilities } from '../data/entityData';
 import { Bug, Search, Globe, Flame, Info } from 'lucide-react';
 
 export const VulnerabilitiesPage: React.FC = () => {
@@ -10,10 +12,11 @@ export const VulnerabilitiesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [exploitableFilter, setExploitableFilter] = useState(false);
   const [exposedFilter, setExposedFilter] = useState(false);
+  const { entity } = useEntity();
 
   useEffect(() => {
     loadVulns();
-  }, [exploitableFilter, exposedFilter]);
+  }, [exploitableFilter, exposedFilter, entity]);
 
   const loadVulns = async () => {
     try {
@@ -22,7 +25,7 @@ export const VulnerabilitiesPage: React.FC = () => {
         exploitable: exploitableFilter,
         exposed: exposedFilter
       });
-      setVulns(res);
+      setVulns(entityVulnerabilities(res, entity));
     } catch (err) {
       console.error(err);
     } finally {

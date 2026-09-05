@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Settings as SettingsIcon, Save, ShieldCheck, Database, Server } from 'lucide-react';
+import { useEntity } from '../context/EntityContext';
 
 export const SettingsPage: React.FC = () => {
-  const [orgName, setOrgName] = useState('Bharat Financial Services Ltd.');
-  const [industry, setIndustry] = useState('Banking & Financial Services');
-  const [defaultBudget, setDefaultBudget] = useState(1000000);
+  const { entity } = useEntity();
+  const [orgName, setOrgName] = useState(entity.name);
+  const [industry, setIndustry] = useState(entity.tier);
+  const [defaultBudget, setDefaultBudget] = useState(entity.dashboard.metrics.security_budget_inr);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setOrgName(entity.name);
+    setIndustry(entity.tier);
+    setDefaultBudget(entity.dashboard.metrics.security_budget_inr);
+    setSaved(false);
+  }, [entity]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();

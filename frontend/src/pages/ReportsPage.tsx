@@ -1,28 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { api, formatINR } from '../services/api';
-import type { ExecutiveReport } from '../types';
+import { formatINR } from '../services/api';
+import type { ExecutiveReport, Recommendation } from '../types';
 import { Printer, FileText, Calendar } from 'lucide-react';
 import { SeverityBadge } from '../components/SeverityBadge';
+import { useEntity } from '../context/EntityContext';
 
 export const ReportsPage: React.FC = () => {
+  const { entity } = useEntity();
   const [report, setReport] = useState<ExecutiveReport | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadReport();
-  }, []);
-
-  const loadReport = async () => {
-    try {
-      setLoading(true);
-      const res = await api.getExecutiveReport();
-      setReport(res);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const metrics = entity.dashboard.metrics;
+    const top_recommendations: Recommendation[] = entity.dashboard.top_risks.map((risk, index) => ({
+      id: index + 1,
+      title: `Mitigate ${risk.risk_title}`,
+      category: risk.category,
+      priority: risk.severity,
+      expected_loss_reduction_inr: Math.round(risk.expected_loss_inr * 0.55),
+      cost_inr: Math.round(metrics.security_budget_inr / 4),
+      roi_multiplier: 2.2,
+      ai_confidence_pct: risk.confidence_score_pct,
+      why_text: `Prioritized for ${entity.name} based on the current ${risk.likelihood_pct}% likelihood and ${formatINR(risk.impact_inr)} impact.`,
+      risk_factors: [risk.category]
+    }));
+    setLoading(true);
+    setReport({ organization_name: entity.name, generated_at: new Date().toLocaleDateString('en-IN'), ...metrics, top_risks: entity.dashboard.top_risks, security_posture: entity.dashboard.security_posture, top_recommendations });
+    setLoading(false);
+  }, [entity]);
 
   const handlePrint = () => {
     window.print();

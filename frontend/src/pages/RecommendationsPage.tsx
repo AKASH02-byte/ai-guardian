@@ -3,24 +3,27 @@ import { api, formatINR } from '../services/api';
 import type { Recommendation } from '../types';
 import { Sparkles, AlertCircle } from 'lucide-react';
 import { SeverityBadge } from '../components/SeverityBadge';
+import { useEntity } from '../context/EntityContext';
+import { entityRecommendations } from '../data/entityData';
 
 interface RecommendationsPageProps {
   onNavigateTab: (tab: any) => void;
 }
 
 export const RecommendationsPage: React.FC<RecommendationsPageProps> = ({ onNavigateTab }) => {
+  const { entity } = useEntity();
   const [recs, setRecs] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadRecs();
-  }, []);
+  }, [entity]);
 
   const loadRecs = async () => {
     try {
       setLoading(true);
       const res = await api.getRecommendations();
-      setRecs(res);
+      setRecs(entityRecommendations(res, entity));
     } catch (err) {
       console.error(err);
     } finally {
@@ -49,7 +52,7 @@ export const RecommendationsPage: React.FC<RecommendationsPageProps> = ({ onNavi
           onClick={() => onNavigateTab('optimizer')}
           className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs"
         >
-          Auto-Fit to Budget (₹10L)
+          Auto-Fit to Budget ({formatINR(entity.dashboard.metrics.security_budget_inr)})
         </button>
       </div>
 

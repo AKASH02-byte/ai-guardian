@@ -3,6 +3,8 @@ import { api, formatINR } from '../services/api';
 import type { Asset } from '../types';
 import { SeverityBadge } from '../components/SeverityBadge';
 import { Server, Search, Filter, Globe, Lock, X } from 'lucide-react';
+import { useEntity } from '../context/EntityContext';
+import { entityAssets } from '../data/entityData';
 
 export const AssetsPage: React.FC = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -10,16 +12,18 @@ export const AssetsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const { entity } = useEntity();
 
   useEffect(() => {
     loadAssets();
-  }, []);
+  }, [entity]);
 
   const loadAssets = async () => {
     try {
       setLoading(true);
       const res = await api.getAssets();
-      setAssets(res);
+      setAssets(entityAssets(res, entity));
+      setSelectedAsset(null);
     } catch (err) {
       console.error(err);
     } finally {

@@ -3,8 +3,11 @@ import { api, formatINR } from '../services/api';
 import type { SecurityControl, SimulationResponse } from '../types';
 import { Sliders, Sparkles, CheckSquare, Square } from 'lucide-react';
 import { MetricCard } from '../components/MetricCard';
+import { useEntity } from '../context/EntityContext';
+import { entityControls, entitySimulation } from '../data/entityData';
 
 export const WhatIfSimulatorPage: React.FC = () => {
+  const { entity } = useEntity();
   const [controls, setControls] = useState<SecurityControl[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>(['CTL-MFA', 'CTL-EDR', 'CTL-BACKUP']);
   const [simResult, setSimResult] = useState<SimulationResponse | null>(null);
@@ -12,12 +15,12 @@ export const WhatIfSimulatorPage: React.FC = () => {
 
   useEffect(() => {
     loadControls();
-  }, []);
+  }, [entity]);
 
   const loadControls = async () => {
     try {
       const res = await api.getControls();
-      setControls(res);
+      setControls(entityControls(res, entity));
     } catch (err) {
       console.error(err);
     }
@@ -27,7 +30,7 @@ export const WhatIfSimulatorPage: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.runSimulation(ids);
-      setSimResult(res);
+      setSimResult(entitySimulation(res, entity));
     } catch (err) {
       console.error(err);
     } finally {
@@ -37,7 +40,7 @@ export const WhatIfSimulatorPage: React.FC = () => {
 
   useEffect(() => {
     calculateSimulation(selectedIds);
-  }, [selectedIds]);
+  }, [selectedIds, entity]);
 
   const toggleControl = (cid: string) => {
     if (selectedIds.includes(cid)) {
@@ -65,7 +68,7 @@ export const WhatIfSimulatorPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 bg-slate-800 p-2.5 rounded-lg border border-slate-700 text-xs font-mono">
-          <span>Baseline Cyber Risk: <strong className="text-rose-400">₹42.6 Lakh</strong></span>
+          <span>Baseline Cyber Risk: <strong className="text-rose-400">{formatINR(entity.dashboard.metrics.current_cyber_risk_inr)}</strong></span>
         </div>
       </div>
 
